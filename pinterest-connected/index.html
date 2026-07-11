@@ -23,11 +23,11 @@
   <div class="ilvw">
     <div class="ilvw-mark" id="mark">✓</div>
     <h1 id="title">Pinterest connected</h1>
-    <p class="ilvw-sub" id="subtitle">Your Pinterest account is now linked to ILVIO. Head back to the app — your pins are ready to shape your style feed.</p>
+    <p class="ilvw-sub" id="subtitle">Your Pinterest account is now linked to ILVIO. Your pins are ready to shape your style feed.</p>
 
     <a class="btn btn--solid" id="return-btn" href="ilvio://pinterest-connected">Return to ILVIO</a>
 
-    <p class="ilvw-fine">If the button doesn&rsquo;t open the app, just switch back to ILVIO manually — the connection is already saved.</p>
+    <p class="ilvw-fine">If the button doesn&rsquo;t open the app, just switch back manually.</p>
   </div>
 
   <footer class="site-footer">
@@ -64,7 +64,7 @@
       } else {
         if (username) {
           document.getElementById("subtitle").textContent =
-            "Linked @" + username + " to ILVIO. Head back to the app — your pins are ready to shape your style feed.";
+            "Linked @" + username + " to ILVIO. Head back to the app, your pins are ready to shape your style feed.";
         }
         // Auto-attempt the app bounce on success. The button remains the
         // reliable user-gesture fallback if the browser blocks this.
