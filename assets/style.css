@@ -2,9 +2,13 @@
    Red Hat Text body, minimal black-on-white palette. */
 
 :root {
-  --fg: #111;
+  --fg: #131313;
   --bg: #fff;
-  --muted: rgba(0, 0, 0, .62);
+  /* Ink scale: real colours instead of opacity-stacked black, so text keeps
+     its softness without washing into the background. */
+  --ink-soft: #3f3f42;   /* body / secondary copy */
+  --ink-mute: #6e6e73;   /* kickers, fineprint, footer */
+  --muted: var(--ink-soft);
   --line: rgba(0, 0, 0, .12);
   --line-soft: rgba(0, 0, 0, .07);
 }
@@ -57,9 +61,9 @@ a { color: inherit; }
 .site-header nav a {
   font-size: .9rem;
   text-decoration: none;
-  opacity: .65;
+  color: var(--ink-soft);
 }
-.site-header nav a:hover { opacity: 1; text-decoration: underline; }
+.site-header nav a:hover { color: var(--fg); text-decoration: underline; }
 
 /* ---- Footer ---- */
 .site-footer {
@@ -76,24 +80,36 @@ a { color: inherit; }
   margin-bottom: 18px;
 }
 .site-footer nav a {
-  opacity: .6;
+  color: var(--ink-mute);
   font-size: .85rem;
   text-decoration: none;
 }
-.site-footer nav a:hover { opacity: 1; text-decoration: underline; }
+.site-footer nav a:hover { color: var(--fg); text-decoration: underline; }
 .site-footer p {
   margin: 0;
   font-size: .8rem;
-  opacity: .5;
+  color: var(--ink-mute);
 }
+.site-footer .org { margin-top: 28px; letter-spacing: .01em; }
+.site-footer .mail { margin-top: 7px; }
+.site-footer .mail a { text-decoration: none; }
+.site-footer .mail a:hover { color: var(--fg); text-decoration: underline; }
 
 /* ---- Landing ---- */
+/* Hero fills the first viewport; the flex spacers split the free space
+   38.2 : 61.8 so the title block sits on the golden section, slightly
+   above true centre — the classical "optical centre". */
 .hero {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 72px 20px 40px;
+  min-height: calc(100vh - 76px);
+  min-height: calc(100svh - 76px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
   text-align: center;
 }
+.hero::before { content: ""; flex: 382 0 0; }
+.hero::after  { content: ""; flex: 618 0 0; }
 .hero h1 {
   font-weight: 200;
   font-size: clamp(2.6rem, 6vw, 4rem);
@@ -101,7 +117,7 @@ a { color: inherit; }
 }
 .hero p {
   font-size: 1.125rem;
-  opacity: .65;
+  color: var(--ink-soft);
   max-width: 34em;
   margin: 0 auto 30px;
 }
@@ -130,21 +146,54 @@ a { color: inherit; }
   font-size: .85rem;
   letter-spacing: .08em;
   text-transform: uppercase;
-  opacity: .45;
+  color: var(--ink-mute);
+}
+
+/* Quiet scroll cue at the bottom of the first viewport. */
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  color: var(--ink-mute);
+  opacity: .55;
+  animation: cue-drift 2.6s ease-in-out infinite;
+}
+.hero { position: relative; }
+@keyframes cue-drift {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 6px); }
 }
 
 .features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   max-width: 1080px;
-  margin: 40px auto 0;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 40px 20px 24px;
 }
+@media (max-width: 999px) { .features { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 559px) { .features { grid-template-columns: 1fr; } }
 .feature {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 26px 24px;
+}
+/* Cards rest just below the fold and fade in as they enter. Hidden state is
+   gated behind html.js so content stays visible without JavaScript. */
+.js .feature {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .8s cubic-bezier(.22, .61, .36, 1), transform .8s cubic-bezier(.22, .61, .36, 1);
+}
+.js .feature:nth-child(2) { transition-delay: .09s; }
+.js .feature:nth-child(3) { transition-delay: .18s; }
+.js .feature:nth-child(4) { transition-delay: .27s; }
+.js .feature.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js .feature { opacity: 1; transform: none; transition: none; }
+  .scroll-cue { animation: none; }
 }
 .feature h2 {
   font-size: 1.35rem;
@@ -153,14 +202,14 @@ a { color: inherit; }
 .feature p {
   margin: 0;
   font-size: .95rem;
-  opacity: .65;
+  color: var(--ink-soft);
 }
 
 /* ---- Pricing (plans) ---- */
 .ilv-wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 72px; }
 .ilv-head { text-align: center; margin-bottom: 8px; }
 .ilv-head h1 { font-weight: 200; font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.05; margin: 0 0 .35em; }
-.ilv-head p { font-size: 1.0625rem; line-height: 1.6; opacity: .65; max-width: 34em; margin: 0 auto; }
+.ilv-head p { font-size: 1.0625rem; line-height: 1.6; color: var(--ink-soft); max-width: 34em; margin: 0 auto; }
 .ilv-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 40px; }
 .ilv-card { flex: 1 1 280px; max-width: 330px; background: var(--bg); border: 1px solid rgba(0, 0, 0, .14); border-radius: 16px; padding: 30px 26px; display: flex; flex-direction: column; transition: transform .2s ease, box-shadow .2s ease; }
 .ilv-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0, 0, 0, .08); }
@@ -169,31 +218,31 @@ a { color: inherit; }
 .ilv-plan { font-weight: 300; font-size: 1.65rem; margin: 0 0 4px; }
 .ilv-price { display: flex; align-items: baseline; gap: 6px; margin: 10px 0 2px; }
 .ilv-price b { font-family: "Newsreader", Georgia, serif; font-weight: 400; font-size: 2.5rem; letter-spacing: -.02em; }
-.ilv-price span { opacity: .6; font-size: .95rem; }
-.ilv-tag { opacity: .6; font-size: .9rem; margin: 0 0 20px; min-height: 1.2em; }
+.ilv-price span { color: var(--ink-mute); font-size: .95rem; }
+.ilv-tag { color: var(--ink-mute); font-size: .9rem; margin: 0 0 20px; min-height: 1.2em; }
 .ilv-list { list-style: none; margin: 0 0 26px; padding: 0; flex: 1; }
 .ilv-list li { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; font-size: .95rem; line-height: 1.4; border-top: 1px solid var(--line-soft); }
 .ilv-list li:first-child { border-top: none; }
-.ilv-list li.ilv-off { opacity: .5; }
+.ilv-list li.ilv-off { color: var(--ink-mute); }
 .ilv-mk { flex: 0 0 auto; font-weight: 600; }
 .ilv-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 15px 18px; border-radius: 999px; font-weight: 600; font-size: .95rem; text-decoration: none; transition: opacity .15s ease; }
 .ilv-cta:hover { opacity: .85; }
 .ilv-cta--solid { background: var(--fg); color: var(--bg); border: 1px solid var(--fg); }
 .ilv-cta--ghost { background: transparent; color: var(--fg); border: 1px solid rgba(0, 0, 0, .18); }
-.ilv-note { text-align: center; opacity: .65; font-size: .9rem; line-height: 1.6; max-width: 42em; margin: 44px auto 0; }
-.ilv-note strong { font-weight: 600; opacity: 1; }
+.ilv-note { text-align: center; color: var(--ink-soft); font-size: .9rem; line-height: 1.6; max-width: 42em; margin: 44px auto 0; }
+.ilv-note strong { font-weight: 600; color: var(--fg); }
 
 /* ---- Welcome (Stripe success) ---- */
 .ilvw { max-width: 640px; margin: 0 auto; padding: 56px 20px 80px; text-align: center; }
 .ilvw-mark { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 26px; display: flex; align-items: center; justify-content: center; background: var(--fg); color: var(--bg); font-size: 36px; line-height: 1; }
 .ilvw h1 { font-weight: 200; font-size: clamp(2.1rem, 5vw, 3.1rem); line-height: 1.05; margin: 0 0 .35em; }
-.ilvw-sub { font-size: 1.0625rem; line-height: 1.65; opacity: .65; max-width: 30em; margin: 0 auto 30px; }
+.ilvw-sub { font-size: 1.0625rem; line-height: 1.65; color: var(--ink-soft); max-width: 30em; margin: 0 auto 30px; }
 .ilvw-panel { background: rgba(0, 0, 0, .04); border-radius: 16px; padding: 26px; margin: 0 auto 34px; max-width: 30em; text-align: left; }
 .ilvw-panel h2 { font-weight: 300; font-size: 1.3rem; margin: 0 0 14px; }
 .ilvw-panel ul { list-style: none; margin: 0; padding: 0; }
 .ilvw-panel li { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; font-size: .95rem; line-height: 1.5; }
-.ilvw-panel li span { flex: 0 0 auto; opacity: .55; }
-.ilvw-fine { opacity: .6; font-size: .875rem; line-height: 1.6; margin: 26px auto 0; max-width: 32em; }
+.ilvw-panel li span { flex: 0 0 auto; color: var(--ink-mute); }
+.ilvw-fine { color: var(--ink-mute); font-size: .875rem; line-height: 1.6; margin: 26px auto 0; max-width: 32em; }
 
 /* ---- Legal documents ---- */
 .legal-doc {
