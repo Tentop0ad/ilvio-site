@@ -31,9 +31,8 @@ const shell = (title, body) => `<!DOCTYPE html>
   <header class="site-header">
     <a class="brand" href="/">ILVIO</a>
     <nav>
+      <a href="/">Home</a>
       <a href="/plans/">Plans</a>
-      <a href="/privacy/">Privacy</a>
-      <a href="/terms/">Terms</a>
     </nav>
   </header>
 
@@ -49,7 +48,8 @@ ${body}
       <a href="/eula/">EULA</a>
       <a href="/delete-account/">Delete account</a>
     </nav>
-    <p>© 2026 ILVIO OÜ · Järve 35A, 11314 Tallinn, Estonia · Registrikood 17333912 · <a href="mailto:info@ilvio.eu">info@ilvio.eu</a></p>
+    <p class="org">© 2026 ILVIO OÜ · Tallinn, Estonia</p>
+    <p class="mail"><a href="mailto:info@ilvio.eu">info@ilvio.eu</a></p>
   </footer>
 </body>
 </html>
