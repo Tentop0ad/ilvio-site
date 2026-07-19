@@ -20,6 +20,24 @@ from the canonical markdown in `appdev/legal/` (see "Regenerating" below).
 | `/pages/<slug>/` | Redirect stubs to the paths above | Old Shopify-era URLs, incl. the currently deployed edge-function constants |
 | `404.html` | Not-found page | GitHub Pages serves this automatically |
 
+## Day-to-day deploys (after initial setup)
+
+Both accounts with Write on `Tentop0ad/ilvio-site` (Holden's `Tentop0ad`, Karl's
+`romulu5`) deploy the same way — **pushing to that repo's `main` IS the deploy**:
+
+```bash
+# 1. Edit files here in mirror-main's site/ (source of truth), commit, push mirror-main.
+# 2. Sync to the Pages repo and push:
+git clone --depth 1 https://github.com/Tentop0ad/ilvio-site /tmp/ilvio-site
+rsync -a --delete --exclude .git site/ /tmp/ilvio-site/
+cd /tmp/ilvio-site && git add -A && git commit -m "Sync from mirror-main site/" && git push
+# 3. Live on https://ilvio.eu in ~1 minute. Build status:
+#    https://github.com/Tentop0ad/ilvio-site/actions
+```
+
+Never edit ilvio-site directly — changes there get clobbered by the next
+`--delete` sync from mirror-main. Edit `site/` here, then sync.
+
 ## Deploying (GitHub Pages, free)
 
 1. Create a **public** repo (e.g. `Tentop0ad/ilvio-site`) — Pages is free only on
