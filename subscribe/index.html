@@ -174,14 +174,20 @@ $('authForm').addEventListener('submit', async (e) => {
   if (mode === 'signup') {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
-      // An existing address is the single most common cause of a duplicate
-      // account — and a duplicate here means paying on one account and using
-      // another. Steer them to sign in rather than silently creating a second.
-      const dup = /already|exists|registered/i.test(error.message || '');
-      say(dup
-        ? 'That email already has an ILVIO account — sign in instead and your subscription will attach to it.'
-        : error.message, 'err');
-      if (dup) setMode('signin');
+      say(error.message, 'err');
+      $('submitBtn').disabled = false;
+      return;
+    }
+    // Supabase does NOT error on a duplicate signup — to prevent email
+    // enumeration it returns a FAKE success with an empty `identities` array.
+    // That empty array is the documented "this address already exists" signal.
+    // Without this check a returning customer would be told to check their
+    // email, receive nothing, and be stuck — or end up on a second account,
+    // paying on one and using the other.
+    if ((data?.user?.identities?.length ?? 0) === 0) {
+      say('That email already has an ILVIO account — sign in and your subscription will attach to it.', 'err');
+      setMode('signin');
+      $('email').value = email;
       $('submitBtn').disabled = false;
       return;
     }
