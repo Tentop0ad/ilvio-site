@@ -1,9 +1,13 @@
 // One-time generator: appdev/legal/*.md -> site/<slug>/index.html
 import { marked } from "marked";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const repo = "C:/Users/holde/desktop/proge/mirror-main";
+// Repo root derived from this file's own location (site/build-legal.mjs), so the
+// script works on all three machines and from any cwd. Was a hardcoded absolute
+// path, which broke for everyone but the person who wrote it.
+const repo = dirname(dirname(fileURLToPath(import.meta.url)));
 const legal = join(repo, "appdev/legal");
 const site = join(repo, "site");
 

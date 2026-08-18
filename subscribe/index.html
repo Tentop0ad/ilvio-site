@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Subscribe — ILVIO</title>
+  <meta name="description" content="Create your ILVIO account and start your subscription.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200;6..72,300;6..72,400&family=Red+Hat+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+  <style>
+    .sub-wrap { max-width: 460px; margin: 0 auto; padding: 40px 20px 72px; }
+    .sub-plan { border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin-bottom: 22px; }
+    .sub-plan h2 { font-size: 1.5rem; margin: 0 0 2px; }
+    .sub-plan .price { font-family: "Newsreader", Georgia, serif; font-size: 2rem; }
+    .sub-plan .price span { font-size: .95rem; color: var(--ink-mute); }
+    .field { display: block; margin-bottom: 12px; }
+    .field span { display: block; font-size: .85rem; color: var(--ink-mute); margin-bottom: 5px; }
+    .field input {
+      width: 100%; padding: 13px 14px; font: inherit; color: var(--fg);
+      border: 1px solid rgba(0,0,0,.18); border-radius: 10px; background: #fff;
+    }
+    .field input:focus { outline: 2px solid var(--fg); outline-offset: -2px; }
+    .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+    .msg { margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: .9rem; line-height: 1.45; display: none; }
+    .msg.err { background: #fdecec; color: #8a1c1c; display: block; }
+    .msg.ok  { background: #eef7ee; color: #1d5a24; display: block; }
+    .msg.info{ background: rgba(0,0,0,.04); color: var(--ink-soft); display: block; }
+    .switch { text-align: center; margin-top: 18px; font-size: .9rem; color: var(--ink-mute); }
+    .switch button { background: none; border: 0; padding: 0; font: inherit; color: var(--fg); text-decoration: underline; cursor: pointer; }
+    .btn[disabled] { opacity: .55; cursor: default; }
+    .legal { font-size: .78rem; color: var(--ink-mute); line-height: 1.5; margin-top: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">ILVIO</a>
+    <nav><a href="/">Home</a><a href="/plans/">Plans</a></nav>
+  </header>
+
+  <main class="sub-wrap">
+    <div class="sub-plan">
+      <h2 id="planName">ILVIO Plus</h2>
+      <div class="price"><span id="planPrice">€4.90</span> <span>/ month</span></div>
+      <p class="ilv-tag" id="planTag" style="margin:8px 0 0">For everyday outfit planning</p>
+    </div>
+
+    <h1 id="formTitle" style="font-size:1.5rem;margin:0 0 4px">Create your account</h1>
+    <p style="color:var(--ink-soft);margin:0 0 20px" id="formLead">
+      You'll use the same account in the ILVIO app.
+    </p>
+
+    <form id="authForm" autocomplete="on">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" id="email" required autocomplete="email" inputmode="email">
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" id="password" required minlength="8" autocomplete="current-password">
+      </label>
+
+      <div class="actions">
+        <button class="btn btn--solid" id="submitBtn" type="submit">Continue to payment</button>
+      </div>
+    </form>
+
+    <div class="msg" id="msg"></div>
+
+    <p class="switch" id="switcher">
+      Already have an account? <button type="button" id="toggleMode">Sign in</button>
+    </p>
+
+    <p class="legal">
+      By subscribing you agree to our <a href="/terms/">Terms</a> and
+      <a href="/privacy/">Privacy Policy</a>. Cancel any time.
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <nav>
+      <a href="/plans/">Plans</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>
+      <a href="/eula/">EULA</a><a href="/delete-account/">Delete account</a>
+    </nav>
+    <p class="org">© 2026 ILVIO OÜ · Tallinn, Estonia</p>
+    <p class="mail"><a href="mailto:info@ilvio.eu">info@ilvio.eu</a></p>
+  </footer>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+// Anon key — safe in a browser: every table is protected by row-level security,
+// so this key alone grants no data access.
+const SUPABASE_URL = 'https://zvnzckckdfwqkiqbjcaj.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2bnpja2NrZGZ3cWtpcWJqY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1Njc3NzAsImV4cCI6MjA4NjE0Mzc3MH0.JGaW6GHqgicDax6Bq9SI3jx7aPnYJZ00pwh6Mi_WHc0';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const PLANS = {
+  plus: { name: 'ILVIO Plus', price: '€4.90', tag: 'For everyday outfit planning' },
+  pro:  { name: 'ILVIO Pro',  price: '€7.90', tag: 'The full ILVIO experience' },
+};
+
+const params = new URLSearchParams(location.search);
+const plan = PLANS[params.get('plan')] ? params.get('plan') : 'plus';
+document.getElementById('planName').textContent  = PLANS[plan].name;
+document.getElementById('planPrice').textContent = PLANS[plan].price;
+document.getElementById('planTag').textContent   = PLANS[plan].tag;
+
+const $ = (id) => document.getElementById(id);
+const msg = $('msg');
+let mode = 'signup'; // or 'signin'
+
+function say(text, kind = 'info') {
+  msg.className = 'msg ' + kind;
+  msg.textContent = text;
+}
+function clearSay() { msg.className = 'msg'; msg.textContent = ''; }
+
+function setMode(next) {
+  mode = next;
+  const signup = mode === 'signup';
+  $('formTitle').textContent = signup ? 'Create your account' : 'Sign in';
+  $('formLead').textContent = signup
+    ? "You'll use the same account in the ILVIO app."
+    : 'Use the same email and password as the ILVIO app.';
+  $('password').autocomplete = signup ? 'new-password' : 'current-password';
+  $('switcher').innerHTML = signup
+    ? 'Already have an account? <button type="button" id="toggleMode">Sign in</button>'
+    : 'New to ILVIO? <button type="button" id="toggleMode">Create an account</button>';
+  document.getElementById('toggleMode').addEventListener('click', () => setMode(signup ? 'signin' : 'signup'));
+  clearSay();
+}
+document.getElementById('toggleMode').addEventListener('click', () => setMode('signin'));
+
+/// Mints a Stripe Checkout session for the signed-in user and redirects.
+async function goToCheckout() {
+  say('Opening secure checkout…');
+  const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+    body: { plan_code: plan },
+  });
+  if (error || !data?.url) {
+    say(data?.error || error?.message || 'Could not start checkout. Please try again.', 'err');
+    $('submitBtn').disabled = false;
+    return;
+  }
+  location.href = data.url;
+}
+
+// Already signed in (returning visitor)? Skip straight to payment.
+const { data: { session } } = await supabase.auth.getSession();
+if (session) {
+  $('formTitle').textContent = 'Ready to subscribe';
+  $('formLead').textContent = `Signed in as ${session.user.email}.`;
+  $('authForm').style.display = 'none';
+  $('switcher').style.display = 'none';
+  const go = document.createElement('button');
+  go.className = 'btn btn--solid';
+  go.style.width = '100%';
+  go.textContent = 'Continue to payment';
+  go.addEventListener('click', goToCheckout);
+  $('authForm').after(go);
+}
+
+$('authForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = $('email').value.trim();
+  const password = $('password').value;
+  $('submitBtn').disabled = true;
+  clearSay();
+
+  if (mode === 'signup') {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      // An existing address is the single most common cause of a duplicate
+      // account — and a duplicate here means paying on one account and using
+      // another. Steer them to sign in rather than silently creating a second.
+      const dup = /already|exists|registered/i.test(error.message || '');
+      say(dup
+        ? 'That email already has an ILVIO account — sign in instead and your subscription will attach to it.'
+        : error.message, 'err');
+      if (dup) setMode('signin');
+      $('submitBtn').disabled = false;
+      return;
+    }
+    // Email confirmation is ON, so a brand-new signup has no session yet.
+    if (!data.session) {
+      say('Check your email to confirm your address, then come back to this page to finish subscribing.', 'ok');
+      $('submitBtn').disabled = false;
+      return;
+    }
+    await goToCheckout();
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    say(error.message, 'err');
+    $('submitBtn').disabled = false;
+    return;
+  }
+  await goToCheckout();
+});
+</script>
+</body>
+</html>
